@@ -1,0 +1,150 @@
+    :root {
+      --bg:#0c1414; --panel:#152122; --felt:radial-gradient(circle at center,#1e6d4a 0%,#145438 55%,#0d3727 100%);
+      --gold:#d8b66a; --text:#eef5f1; --muted:#a7bbb0; --accent:#64d39b; --danger:#ea7d7d;
+      --shadow:0 18px 40px rgba(0,0,0,.35); font-family:Inter,system-ui,Arial,sans-serif;
+      /* Unified button system tokens — one consistent language across lobby, table, and embedded views */
+      --btn-radius:8px;
+      --btn-pad-y:9px; --btn-pad-x:14px;
+      --btn-h:44px;            /* touch-friendly default */
+      --btn-h-compact:34px;    /* dense in-game bar */
+      --btn-font:.92rem;
+      --btn-weight:750;
+      --btn-gap:8px;
+      --btn-ease:160ms cubic-bezier(.4,0,.2,1);
+      --btn-ring:0 0 0 3px rgba(100,211,155,.42);
+      /* Action color ramp */
+      --c-success:#1f9654; --c-success-2:#239b58; --c-success-bd:rgba(92,224,147,.55);
+      --c-danger:#ad3335;  --c-danger-2:#b53638;  --c-danger-bd:rgba(224,92,92,.55);
+      --c-neutral:#44484a; --c-neutral-2:#596168; --c-neutral-bd:rgba(205,215,220,.24);
+      --c-allin:#44484a;   --c-allin-2:#4f5355;   --c-allin-bd:rgba(205,215,220,.18);
+      --c-base:#2c3a3c;    --c-base-2:#384749;    --c-base-bd:rgba(255,255,255,.12);
+    }
+    * { box-sizing:border-box; min-width:0; }
+    button, input, select, .panel, .room-card, .player, .seat-empty, .topbar, .side { max-width:100%; }
+    button, .room-card, .room-meta, .player .name, .player .info, .seat-empty .muted, .hint, .control-status, .pill { overflow-wrap:anywhere; word-break:break-word; }
+    button { overflow:hidden; text-overflow:ellipsis; }
+    body { margin:0; background:linear-gradient(180deg,#0a1212,#0e1818 35%,#111f1f); color:var(--text); }
+    .portfolio-back { position:fixed; left:14px; top:14px; z-index:1000; text-decoration:none; background:rgba(12,20,20,.84); border:1px solid rgba(216,182,106,.32); color:#fff8dd; padding:9px 12px; border-radius:999px; font-weight:800; box-shadow:0 10px 30px rgba(0,0,0,.25); backdrop-filter:blur(10px); }
+    .portfolio-back:hover { background:rgba(27,44,42,.96); }
+    .app { display:grid; grid-template-columns:minmax(0,1fr); grid-template-areas:"table" "variance"; gap:16px; width:min(100%,1600px); margin:0 auto; padding:72px 16px 18px; min-height:100vh; }
+    body.poker-table-mode .app { grid-template-columns:minmax(0,1fr); grid-template-areas:"table"; }
+    body.poker-lobby-mode::before { content:''; position:fixed; inset:0; z-index:50; pointer-events:none; background:radial-gradient(circle at 50% 45%, rgba(100,211,155,.08), transparent 34%), rgba(5,10,10,.62); backdrop-filter:blur(4px); animation:lobbyFade .3s ease both; }
+    .lobby-panel { grid-area:lobby; display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:80; width:min(430px,calc(100vw - 32px)); max-height:calc(100dvh - 96px); overflow:auto; }
+    body.poker-lobby-mode .lobby-panel { display:block; animation:lobbyRise .32s cubic-bezier(.4,0,.2,1) both; }
+    @keyframes lobbyFade { from { opacity:0; } to { opacity:1; } }
+    @keyframes lobbyRise { from { opacity:0; transform:translate(-50%,-46%); } to { opacity:1; transform:translate(-50%,-50%); } }
+    @media (prefers-reduced-motion: reduce) { body.poker-lobby-mode::before, body.poker-lobby-mode .lobby-panel { animation:none; } }
+    .panel { background:rgba(18,29,30,.94); border:1px solid rgba(216,182,106,.16); border-radius:18px; box-shadow:var(--shadow); padding:16px; }
+    h1,h2,h3,p { margin:0; }
+    .title { font-size:1.3rem; margin-bottom:6px; }
+    .sub { color:var(--muted); font-size:.95rem; margin-bottom:12px; }
+    .row { display:flex; gap:8px; }
+    input,select { border-radius:9px; border:1px solid rgba(255,255,255,.14); background:rgba(11,18,18,.6); color:var(--text); padding:9px 12px; font:inherit; transition:border-color var(--btn-ease), box-shadow var(--btn-ease); }
+    input:focus-visible, select:focus-visible { outline:none; border-color:var(--accent); box-shadow:var(--btn-ring); }
+
+    /* ── Unified button system ──────────────────────────────────────────────
+       Every button shares one shape, motion, and disabled language. Color
+       encodes intent: green = commit/action, red = fold/leave (danger),
+       grey = neutral/check/call/all-in. */
+    button {
+      cursor:pointer;
+      border:1px solid var(--c-base-bd);
+      background:linear-gradient(180deg,var(--c-base-2),var(--c-base));
+      color:var(--text);
+      border-radius:var(--btn-radius);
+      padding:var(--btn-pad-y) var(--btn-pad-x);
+      min-height:var(--btn-h);
+      font:inherit; font-size:var(--btn-font); font-weight:var(--btn-weight);
+      line-height:1.1; letter-spacing:.01em;
+      display:inline-flex; align-items:center; justify-content:center; gap:6px;
+      box-shadow:0 1px 0 rgba(255,255,255,.09) inset, 0 1px 2px rgba(0,0,0,.28);
+      transition:transform var(--btn-ease), background var(--btn-ease), border-color var(--btn-ease), box-shadow var(--btn-ease), opacity var(--btn-ease);
+      -webkit-tap-highlight-color:transparent;
+    }
+    button:hover:not(:disabled) { filter:brightness(1.08); border-color:rgba(255,255,255,.22); }
+    button:active:not(:disabled) { transform:translateY(1px); box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 1px 3px rgba(0,0,0,.22); filter:brightness(.96); }
+    button:focus-visible { outline:none; box-shadow:var(--btn-ring), 0 2px 6px rgba(0,0,0,.18); }
+
+    /* Success / commit — Bet, Raise, Start, Create, Join, primary actions */
+    button.primary, #betBtn, #startHandBtn, #createRoomBtn, #joinSeatBtn, .join-btn, #rejoinBtn {
+      background:linear-gradient(180deg,var(--c-success-2),var(--c-success));
+      border-color:var(--c-success-bd); color:#f2fff6; font-weight:850;
+      box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 1px 2px rgba(0,0,0,.26);
+    }
+    /* Danger — Fold and destructive table controls */
+    #foldBtn, button.warn, .del-btn {
+      background:linear-gradient(180deg,var(--c-danger-2),var(--c-danger));
+      border-color:var(--c-danger-bd); color:#fff; font-weight:850;
+      box-shadow:0 1px 0 rgba(255,255,255,.16) inset, 0 1px 2px rgba(0,0,0,.26);
+    }
+    /* Neutral — Check, Call, Next Hand and other no-commitment actions */
+    #checkBtn, #callBtn, #nextHandBtn {
+      background:linear-gradient(180deg,var(--c-neutral-2),var(--c-neutral));
+      border-color:var(--c-neutral-bd); color:#f4f7f5; font-weight:850;
+    }
+    /* All-in — dark neutral, matching the compact action controls */
+    #allInBtn {
+      background:linear-gradient(180deg,var(--c-allin-2),var(--c-allin));
+      border-color:var(--c-allin-bd); color:#f4f7f5; font-weight:850; letter-spacing:0;
+      box-shadow:0 1px 0 rgba(255,255,255,.13) inset, 0 1px 2px rgba(0,0,0,.26);
+    }
+    /* Leave — secondary danger: outlined, quieter than Fold but clearly an exit */
+    #leaveSeatBtn {
+      background:rgba(178,56,56,.14); border-color:var(--c-danger-bd); color:#ffd2d2; font-weight:800;
+      box-shadow:none;
+    }
+    #leaveSeatBtn:hover:not(:disabled) { background:rgba(178,56,56,.24); filter:none; }
+
+    /* Clearly disabled — washed out, flat, no motion or hover affordance */
+    button:disabled {
+      opacity:.42; cursor:not-allowed; filter:none; transform:none;
+      box-shadow:none; border-color:rgba(255,255,255,.08);
+      background:linear-gradient(180deg,#2a3537,#222c2d); color:rgba(238,245,241,.6);
+    }
+    body.is-busy button:not(#muteBtn) { cursor:progress; }
+    .stack { display:grid; gap:10px; }
+    /* Lobby structure — grouped, labelled sections so it reads organised not cramped */
+    .lobby-section { margin-top:14px; }
+    .lobby-section:first-of-type { margin-top:10px; }
+    .lobby-section-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:9px; color:var(--gold); font-size:.74rem; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
+    .field { display:grid; gap:4px; min-width:0; }
+    .field > span { color:var(--muted); font-size:.74rem; font-weight:750; letter-spacing:.02em; }
+    .field-row { display:grid; grid-template-columns:1.3fr .7fr; gap:8px; }
+    .ghost-btn { background:transparent; border:1px solid rgba(255,255,255,.16); color:var(--muted); min-height:30px; padding:5px 11px; font-size:.78rem; font-weight:700; box-shadow:none; }
+    .ghost-btn:hover:not(:disabled) { color:var(--text); border-color:rgba(255,255,255,.3); filter:none; }
+    .room-list { display:grid; gap:10px; }
+    .room-card { background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:13px; display:grid; gap:10px; transition:border-color var(--btn-ease), background var(--btn-ease); }
+    .room-card:hover { border-color:rgba(255,255,255,.14); }
+    .room-card.active-room { border-color:rgba(100,211,155,.4); background:rgba(100,211,155,.08); }
+    .room-card-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .room-card strong { display:block; font-size:1rem; overflow-wrap:anywhere; line-height:1.2; }
+    .room-current { color:var(--accent); font-weight:750; font-size:.82rem; }
+    .room-status { flex:none; padding:3px 9px; border-radius:999px; font-size:.68rem; font-weight:850; letter-spacing:.04em; text-transform:uppercase; border:1px solid transparent; }
+    .room-status.is-open { color:#bff5d8; background:rgba(100,211,155,.14); border-color:rgba(100,211,155,.34); }
+    .room-status.is-playing { color:#ffe8a5; background:rgba(216,182,106,.14); border-color:rgba(216,182,106,.36); }
+    .room-status.is-full { color:#ffd2d2; background:rgba(234,125,125,.12); border-color:rgba(234,125,125,.32); }
+    .room-meta { display:flex; flex-wrap:wrap; gap:6px; line-height:1.2; overflow-wrap:anywhere; }
+    .room-pill { padding:3px 9px; border-radius:999px; background:rgba(0,0,0,.24); border:1px solid rgba(255,255,255,.08); color:var(--muted); font-size:.76rem; font-weight:700; }
+    .room-card .join-btn { width:100%; }
+    .room-card-actions { display:grid; grid-template-columns:1fr auto; gap:8px; }
+    .room-card-actions .copy-room-btn { width:100%; }
+    .room-list-empty { color:var(--muted); font-size:.9rem; line-height:1.4; padding:16px 14px; border:1px dashed rgba(255,255,255,.14); border-radius:14px; background:rgba(255,255,255,.025); text-align:center; }
+    .invite-panel { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border:1px solid rgba(216,182,106,.28); border-radius:16px; background:linear-gradient(135deg,rgba(216,182,106,.12),rgba(100,211,155,.075)); box-shadow:var(--shadow); }
+    .invite-panel[hidden] { display:none !important; }
+    .invite-copy { display:grid; gap:3px; min-width:0; }
+    .invite-copy strong { color:#fff8dc; font-size:.95rem; }
+    .invite-copy span { color:var(--muted); font-size:.82rem; line-height:1.25; }
+    .invite-code { display:inline-flex; align-items:center; justify-content:center; padding:6px 9px; border-radius:999px; background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.08); color:var(--gold); font-weight:900; letter-spacing:.08em; white-space:nowrap; }
+    .rejoin-gate { position:fixed; inset:0; z-index:998; display:flex; align-items:center; justify-content:center; padding:20px; background:linear-gradient(180deg,rgba(8,14,14,.97),rgba(13,23,23,.97)); }
+    .rejoin-gate[hidden] { display:none !important; }
+    .rejoin-card { width:min(94vw,430px); border-radius:22px; padding:22px; text-align:center; background:rgba(18,29,30,.96); border:1px solid rgba(216,182,106,.28); box-shadow:0 30px 80px rgba(0,0,0,.45); }
+    .rejoin-card h2 { margin:0 0 8px; font-size:1.25rem; color:#fff8dc; }
+    .rejoin-card p { color:var(--muted); font-size:.94rem; line-height:1.35; margin:0 0 14px; }
+    .rejoin-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+    .saved-room-pill { display:inline-flex; align-items:center; justify-content:center; margin:6px 0 4px; padding:7px 11px; border-radius:999px; border:1px solid rgba(216,182,106,.4); background:rgba(216,182,106,.12); color:var(--gold); font-weight:950; letter-spacing:.08em; }
+    .turn-timer { position:relative; z-index:40; margin:0 auto 8px; width:max-content; max-width:100%; padding:6px 12px; border-radius:999px; background:rgba(8,14,14,.92); border:1px solid rgba(255,255,255,.14); color:#ffe8a5; font-weight:900; font-size:.83rem; box-shadow:0 6px 18px rgba(0,0,0,.4); backdrop-filter:blur(4px); }
+    .turn-timer[hidden] { display:none !important; }
+    .turn-timer.is-mine { border-color:rgba(100,211,155,.65); color:#d8ffe9; background:rgba(15,46,33,.94); box-shadow:0 6px 18px rgba(0,0,0,.4), 0 0 16px rgba(100,211,155,.22); }
+    .turn-timer.is-low { border-color:rgba(234,125,125,.7); color:#ffd1d1; background:rgba(46,18,18,.94); animation:timerPulse .8s ease-in-out infinite alternate; }
+    body.poker-table-mode .turn-timer { display:none !important; }
+    @keyframes timerPulse { from { transform:scale(1); } to { transform:scale(1.035); } }
